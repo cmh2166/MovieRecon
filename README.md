@@ -1,5 +1,17 @@
 # MovieRecon
 
+## Matched/Reconciled Entities
+
+Entities | Field(s) | Dataset(s) | Score Ranking
+--- | --- | --- | ---
+Agents | **Art Director**, **Copyright Owner**, **Currently stored in**, **DP/Cinematographer**, **Dir Gender**, **Director**, **Distributor**, **Donated By:**, **Editor**, **Inspector's Name**, **Labs used by filmmaker**, **Music**, **Principal Cast**, **Producer**, **Production Company**, **Projectionist's Name**, **Script**, **Stock brand**  | LC, Wikidata | 80%
+Form |  **Format type**, **HFA Format(s)**, **HFA Formats**, **Original Format**, *video analog format*, *video definition type* | TBD | TBD
+Genre | **Classification**, **Fiction**, **Genre**, **Non Fiction**, **short'**  | TBD | TBD
+Language | **Intertitle Language**, **Language**, **Subtitle Language** | TBD | TBD
+Place | **Country**, **Currently stored in**, **Setting** | TBD | TBD
+Topics | **LOC Authority Subject Headings**, **Pro**, **Subject** | TBD | TBD
+Works | **Also known as Title**, **Alternate Title**, **Datecode this print:**, **English Title**, **OCLC #**, **Original Source**, **Original Titles**, **Series title**, **Title on Print**, **Year of Release** | TBD | TBD
+
 ## Fields
 
 field/column name | matched? | dataset | notes
@@ -250,15 +262,3 @@ Viewed on Steenbeck? | ignore | ignore | ignore, either yes or None (boolean as 
 Viewed on projector? | ignore | ignore | ignore, either yes or None (boolean as text)
 WC | ignore | ignore | integer value, no clue what this is.
 **Year of Release** | WORK co-search datapoint | TBD | dates are not formatted consistently. Mostly years. Some qualifiers, mostly abbreviated.
-
-## Matched/Reconciled Entities
-
-Entities | Field(s) | Dataset(s) | Score Ranking
---- | --- | --- | ---
-Works | **Also known as Title**, **Alternate Title**, **Datecode this print:**, **English Title**, **OCLC #**, **Original Source**, **Original Titles**, **Series title**, **Title on Print**, **Year of Release** | TBD | TBD
-Agents | **Art Director**, **Copyright Owner**, **Currently stored in**, **DP/Cinematographer**, **Dir Gender**, **Director**, **Distributor**, **Donated By:**, **Editor**, **Inspector's Name**, **Labs used by filmmaker**, **Music**, **Principal Cast**, **Producer**, **Production Company**, **Projectionist's Name**, **Script**, **Stock brand**  | TBD | TBD
-Genre | **Classification**, **Fiction**, **Genre**, **Non Fiction**, **short'**  | TBD | TBD
-Place | **Country**, **Currently stored in**, **Setting** | TBD | TBD
-FORM |  **Format type**, **HFA Format(s)**, **HFA Formats**, **Original Format**, *video analog format*, *video definition type* | TBD | TBD
-Language | **Intertitle Language**, **Language**, **Subtitle Language** | TBD | TBD
-Topics | **LOC Authority Subject Headings**, **Pro**, **Subject** | TBD | TBD
