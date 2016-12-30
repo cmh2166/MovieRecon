@@ -45,7 +45,12 @@ def main():
     for m in data[1:]:
         internal_dict = {}
         for n in range(len(m)):
-            internal_dict[header[n]] = m[n].strip()
+            # Remove annoying Windows-based(Access?) encoding from orig data.
+            value = m[n].strip("\ufffd")
+            value = value.replace("\ufffd", " | ")
+            value = value.replace("\u2026", "...").replace("\u201c", '"')
+            value = value.replace("\u201d", '"').replace("\u2019", "'")
+            internal_dict[header[n]] = value
         output_dict[data.index(m)] = internal_dict
 
     """Writing Dictionary to Json Output file."""
