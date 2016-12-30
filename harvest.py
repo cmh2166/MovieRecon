@@ -1,6 +1,8 @@
 """Harvest movie data from Google Spreadsheet, convert to dict/json."""
 from argparse import ArgumentParser
-import yaml
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import json
 
 
 class RepoInvestigatorException(Exception):
@@ -23,30 +25,32 @@ def main():
     parser.add_argument("-o", "--output", dest="output",
                         default="data/output.json",
                         help="Filename & directory for JSON output(s).")
-    parser.add_argument("-u", "--username", dest="username",
-                        help="Google Drive Authentication Username.")
-    parser.add_argument("-p", "--password", dest="password",
-                        help="Google Drive Authentication Password.")
-    parser.add_argument("-c", "--config", dest="config",
-                        help="Config file (YAML) for running this harvest.")
+    parser.add_argument("-c", "--config", dest="cfg",
+                        help="Config file (JSON) for running Google Apps.")
     args = parser.parse_args()
-
-    if not args.input and not args.config:
+    if not args.input or not args.cfg:
         parser.print_help()
         parser.exit()
 
-    if args.config:
-        with open(args.config, 'r') as yamlfile:
-            cfg = yaml.load(yamlfile)
-            inputURL = cfg['googleAuth']['input']
-            output = cfg['googleAuth']['output']
-            username = cfg['googleAuth']['user']
-            password = cfg['googleAuth']['password']
-    else:
-        inputURL = args.input
-        output = args.output
-        username = args.username
-        password = args.password
+    """Set up for accessing Google Sheet with document."""
+    sheet = ['https://spreadsheets.google.com/feeds']
+    creds = ServiceAccountCredentials.from_json_keyfile_name(args.cfg, sheet)
+    drive = gspread.authorize(creds)
+    ssheet = drive.open_by_url(args.input)
+    data = ssheet.sheet1.get_all_values()
+    header = data[0]
+
+    """Generating dictionary from Google Sheet data."""
+    output_dict = {}
+    for m in data[1:]:
+        internal_dict = {}
+        for n in range(len(m)):
+            internal_dict[header[n]] = m[n].strip()
+        output_dict[data.index(m)] = internal_dict
+
+    """Writing Dictionary to Json Output file."""
+    with open(args.output, 'w') as fout:
+        json.dump(output_dict, fout)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,0 @@
-googleAuth:
-    user: Your Google Drive Username / Email
-    password: Your Google Drive Password
-    input: http://googleurl.test.com (URL for your Google Drive Sheet)
-    output: data/output.json (Filename and directory for the data output)
