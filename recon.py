@@ -1,7 +1,16 @@
 """Match movie data from Google-sourced JSON to various datasets."""
 from argparse import ArgumentParser
 import json
-import pprint
+from norm import *
+
+entity_types = ["Agent", "Form", "Genre", "Language", "Place", "Topic", "Work"]
+s_agent_fields = ["Art Director", "DP/Cinematographer", "Director",
+                  "Distributor", "Editor", "Music", "Producer",
+                  "Production Company", "Script", "Stock brand"]
+c_agent_fields = ["Copyright Owner", "Currently stored in", "Donated By:",
+                  "Inspector's Name", "Labs used by filmmaker",
+                  "Principal Cast", "Projectionist's Name"]
+s_delimiters = ["|", ",", ";"]
 
 
 class RepoInvestigatorException(Exception):
@@ -17,7 +26,7 @@ class RepoInvestigatorException(Exception):
 
 
 def main():
-    """Main method for performing recon with parameters."""
+    """Main method for performing recon on a field or entity type."""
     parser = ArgumentParser(usage='%(prog)s [options]')
     parser.add_argument("-i", "--input", dest="input",
                         default="data/output.json",
@@ -26,28 +35,29 @@ def main():
                         default="data/matched_output.json",
                         help="Matched JSON output data file.")
     parser.add_argument("-f", "--field", dest="field",
-                        help="Field for easy review of metadata.")
+                        help="Field for reconciliation.")
+    parser.add_argument("-e", "--entity", dest="entity",
+                        help="Entity type for reconciliation. See README.md")
     args = parser.parse_args()
+    if not args.field and not args.entity:
+        parser.print_help()
+        parser.exit()
 
     """Pull in Google-sourced JSON data."""
     with open(args.input, 'r') as fout:
         data = json.load(fout)
-    keys = set()
-    for n in data:
-        for key in data[n].keys():
-            keys.add(key)
-    keys = list(keys)
-    for key in sorted(keys):
-        print(key)
-        print("-----------------------------\n")
-        values = set()
-        for n in data:
-            value = data[n][key]
-            values.add(value)
-        values = list(values)
-        for value in sorted(values):
-            print(value)
-        print("========================================")
+    labels = []
+
+    """Match against field or entity type field set."""
+    if args.field:
+        for record in data:
+            if data[record][args.field]:
+                val = data[record][args.field]
+                if any(delim in val for delim in s_delimiters):
+                    labels = field_split(val)
+                else:
+                    labels = [val.strip()]
+                for label in labels:
 
 
 if __name__ == '__main__':
