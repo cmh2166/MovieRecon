@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 import json
 from norm import *
+import requests
 
 entity_types = ["Agent", "Form", "Genre", "Language", "Place", "Topic", "Work"]
 s_agent_fields = ["Art Director", "DP/Cinematographer", "Director",
@@ -49,15 +50,32 @@ def main():
     labels = []
 
     """Match against field or entity type field set."""
-    if args.field:
-        for record in data:
+    for record in data:
+        if args.field:
             if data[record][args.field]:
                 val = data[record][args.field]
                 if any(delim in val for delim in s_delimiters):
                     labels = field_split(val)
                 else:
                     labels = [val.strip()]
-                for label in labels:
+        elif args.entity == "Agent":
+            for field in s_agent_fields:
+                if data[record][field]:
+                    val = data[record][field]
+                    if any(delim in val for delim in s_delimiters):
+                        labels = field_split(val)
+                    else:
+                        labels = [val.strip()]
+        pre_queries = {}
+        for label in labels:
+            key = "q" + str(labels.index(label))
+            queries[key] = {}
+            queries[key]["query"] = label
+            queries[key]["type"] = "Names"
+        queries = {}
+        queries["queries"] = json.dumps(pre_queries)
+        resp = requests.post("http://localhost:5000/", data=queries).json()
+        print(resp["q0"])
 
 
 if __name__ == '__main__':
